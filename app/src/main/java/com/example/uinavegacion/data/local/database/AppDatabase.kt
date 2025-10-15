@@ -10,16 +10,45 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.example.uinavegacion.data.local.categoria.CategoriaEntity
+import com.example.uinavegacion.data.local.categoria.CategoriaDao
+import com.example.uinavegacion.data.local.genero.GeneroEntity
+import com.example.uinavegacion.data.local.genero.GeneroDao
+import com.example.uinavegacion.data.local.juego.JuegoEntity
+import com.example.uinavegacion.data.local.juego.JuegoDao
+import com.example.uinavegacion.data.local.estado.EstadoEntity
+import com.example.uinavegacion.data.local.estado.EstadoDao
+import com.example.uinavegacion.data.local.rol.RolEntity
+import com.example.uinavegacion.data.local.rol.RolDao
+import com.example.uinavegacion.data.local.licencia.LicenciaEntity
+import com.example.uinavegacion.data.local.licencia.LicenciaDao
+import com.example.uinavegacion.data.local.ordenCompra.OrdenCompraEntity
+import com.example.uinavegacion.data.local.ordenCompra.OrdenCompraDao
+import com.example.uinavegacion.data.local.detalle.DetalleEntity
+import com.example.uinavegacion.data.local.detalle.DetalleDao
+import com.example.uinavegacion.data.local.reserva.ReservaEntity
+import com.example.uinavegacion.data.local.reserva.ReservaDao
 
 //registrar las entidades pertenecientes a la BD
 
 @Database(
 
-    entities = [UserEntity::class],
+    entities = [
+        UserEntity::class,
+        CategoriaEntity::class,
+        GeneroEntity::class,
+        JuegoEntity::class,
+        EstadoEntity::class,
+        RolEntity::class,
+        LicenciaEntity::class,
+        OrdenCompraEntity::class,
+        DetalleEntity::class,
+        ReservaEntity::class
+    ],
 
     version = 1,
 
-    exportSchema = true
+    exportSchema = false
 
 )
 
@@ -28,6 +57,15 @@ abstract class AppDatabase: RoomDatabase(){
     //exponemos o incluimos los DAO de cada entidad
 
     abstract fun userDao(): UserDao
+    abstract fun categoriaDao(): CategoriaDao
+    abstract fun generoDao(): GeneroDao
+    abstract fun juegoDao(): JuegoDao
+    abstract fun estadoDao(): EstadoDao
+    abstract fun rolDao(): RolDao
+    abstract fun licenciaDao(): LicenciaDao
+    abstract fun ordenCompraDao(): OrdenCompraDao
+    abstract fun detalleDao(): DetalleDao
+    abstract fun reservaDao(): ReservaDao
 
 
 
