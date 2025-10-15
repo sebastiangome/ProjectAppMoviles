@@ -1,55 +1,143 @@
 package com.example.uinavegacion.ui.components
 
-import androidx.compose.material.icons.Icons // Íconos Material
-import androidx.compose.material.icons.filled.Home // Ícono Home
-import androidx.compose.material.icons.filled.AccountCircle // Ícono Login
-import androidx.compose.material.icons.filled.Person // Ícono Registro
-import androidx.compose.material3.Icon // Ícono en ítem del drawer
-import androidx.compose.material3.NavigationDrawerItem // Ítem seleccionable
-import androidx.compose.material3.NavigationDrawerItemDefaults // Defaults de estilo
-import androidx.compose.material3.Text // Texto
-import androidx.compose.material3.ModalDrawerSheet // Contenedor de contenido del drawer
-import androidx.compose.runtime.Composable // Marcador composable
-import androidx.compose.ui.Modifier // Modificador
-import androidx.compose.ui.graphics.vector.ImageVector // Tipo de ícono
-// Pequeña data class para representar cada opción del drawer
-data class DrawerItem( // Estructura de un ítem de menú lateral
-    val label: String, // Texto a mostrar
-    val icon: ImageVector, // Ícono del ítem
-    val onClick: () -> Unit // Acción al hacer click
-)
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import com.example.uinavegacion.navigation.Route
 
-@Composable // Componente Drawer para usar en ModalNavigationDrawer
+@Composable
 fun AppDrawer(
-    currentRoute: String?, // Ruta actual (para marcar seleccionado si quieres)
-    items: List<DrawerItem>, // Lista de ítems a mostrar
-    modifier: Modifier = Modifier // Modificador opcional
+    currentRoute: String?,          // Ruta actual para saber qué ítem resaltar
+    onNavigate: (String) -> Unit,   // Función para navegar a cualquier pantalla
+    onLogout: () -> Unit,           // Función para cerrar la sesión
+    isAdmin: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
-    ModalDrawerSheet( // Hoja que contiene el contenido del drawer
-        modifier = modifier // Modificador encadenable
-    ) {
-        // Recorremos las opciones y pintamos ítems
-        items.forEach { item -> // Por cada ítem
-            NavigationDrawerItem( // Ítem con estados Material
-                label = { Text(item.label) }, // Texto visible
-                selected = false, // Puedes usar currentRoute == ... si quieres marcar
-                onClick = item.onClick, // Acción al pulsar
-                icon = { Icon(item.icon, contentDescription = item.label) }, // Ícono
-                modifier = Modifier, // Sin mods extra
-                colors = NavigationDrawerItemDefaults.colors() // Estilo por defecto
+    ModalDrawerSheet(modifier = modifier) {
+        // 1. Header con información del usuario (se mantiene como lo tenías)
+        Column(modifier = Modifier.padding(16.dp)) {
+            Surface(
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(CircleShape),
+                color = MaterialTheme.colorScheme.primaryContainer
+            ) {
+                Icon(
+                    Icons.Filled.AccountCircle,
+                    contentDescription = "Avatar",
+                    modifier = Modifier.padding(12.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(if (isAdmin) "Administrador" else "Usuario Demo", style = MaterialTheme.typography.titleMedium)
+            Text(if (isAdmin) "admin@steamish.com" else "demo@correo.cl", style = MaterialTheme.typography.bodySmall)
+        }
+
+        Divider()
+
+        // 2. Items de navegación funcionales
+        Column(modifier = Modifier.padding(12.dp)) {
+            if (isAdmin) {
+                NavigationDrawerItem(
+                    label = { Text("Agregar Productos") },
+                    selected = currentRoute == Route.AdminAddGame.path,
+                    onClick = { onNavigate(Route.AdminAddGame.path) },
+                    icon = { Icon(Icons.Filled.AddBox, contentDescription = "Agregar Productos") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Administrar Usuarios") },
+                    selected = currentRoute == Route.AdminGames.path,
+                    onClick = { onNavigate(Route.AdminGames.path) },
+                    icon = { Icon(Icons.Filled.People, contentDescription = "Administrar Usuarios") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Perfil") },
+                    selected = currentRoute == Route.Profile.path,
+                    onClick = { onNavigate(Route.Profile.path) },
+                    icon = { Icon(Icons.Filled.Person, contentDescription = "Perfil") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Cerrar Sesión") },
+                    selected = false, // El logout nunca está "seleccionado"
+                    onClick = onLogout, // Llama a la función de logout del NavGraph
+                    icon = { Icon(Icons.Filled.ExitToApp, contentDescription = "Cerrar Sesión") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+            } else {
+                NavigationDrawerItem(
+                    label = { Text("Inicio") },
+                    selected = currentRoute == Route.Home.path,
+                    onClick = { onNavigate(Route.Home.path) },
+                    icon = { Icon(Icons.Filled.Home, contentDescription = "Inicio") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Juegos") },
+                    selected = currentRoute == Route.Games.path,
+                    onClick = { onNavigate(Route.Games.path) },
+                    icon = { Icon(Icons.Filled.SportsEsports, contentDescription = "Juegos") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Biblioteca") },
+                    selected = currentRoute == Route.Library.path,
+                    onClick = { onNavigate(Route.Library.path) },
+                    icon = { Icon(Icons.Filled.LocalLibrary, contentDescription = "Biblioteca") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Carrito") },
+                    selected = currentRoute == Route.Cart.path,
+                    onClick = { onNavigate(Route.Cart.path) },
+                    icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = "Carrito") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Mis Pedidos") },
+                    selected = currentRoute == Route.Orders.path,
+                    onClick = { onNavigate(Route.Orders.path) },
+                    icon = { Icon(Icons.Filled.Receipt, contentDescription = "Pedidos") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Ajustes") },
+                    selected = currentRoute == Route.Settings.path,
+                    onClick = { onNavigate(Route.Settings.path) },
+                    icon = { Icon(Icons.Filled.Settings, contentDescription = "Ajustes") },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+            }
+        }
+
+        // 3. Espaciador para empujar el logout al final
+        Spacer(modifier = Modifier.weight(1f))
+
+        // 4. Footer con acción de logout funcional
+        Column(modifier = Modifier.padding(12.dp)) {
+            Divider()
+            NavigationDrawerItem(
+                label = { Text("Cerrar Sesión") },
+                selected = false, // El logout nunca está "seleccionado"
+                onClick = onLogout, // Llama a la función de logout del NavGraph
+                icon = { Icon(Icons.Filled.ExitToApp, contentDescription = "Cerrar Sesión") },
+                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "Versión 1.0.0",
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
     }
 }
-
-// Helper para construir la lista estándar de ítems del drawer
-@Composable
-fun defaultDrawerItems(
-    onHome: () -> Unit,   // Acción Home
-    onLogin: () -> Unit,  // Acción Login
-    onRegister: () -> Unit // Acción Registro
-): List<DrawerItem> = listOf(
-    DrawerItem("Home", Icons.Filled.Home, onHome),          // Ítem Home
-    DrawerItem("Login", Icons.Filled.AccountCircle, onLogin),       // Ítem Login
-    DrawerItem("Registro", Icons.Filled.Person, onRegister) // Ítem Registro
-)

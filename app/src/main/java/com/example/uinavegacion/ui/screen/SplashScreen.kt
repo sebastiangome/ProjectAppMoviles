@@ -13,7 +13,7 @@ import com.example.uinavegacion.navigation.*
 fun SplashScreen(nav: NavHostController) {
     LaunchedEffect(Unit) {
         delay(1200)
-        nav.navigate(Route.Onboarding.path) {
+        nav.navigate(Route.Home.path) {
             popUpTo(Route.Splash.path) { inclusive = true }
         }
     }

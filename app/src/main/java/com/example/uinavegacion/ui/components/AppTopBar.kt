@@ -6,6 +6,14 @@ import androidx.compose.material.icons.filled.AccountCircle // Ícono Login
 import androidx.compose.material.icons.filled.Menu // Ícono hamburguesa
 import androidx.compose.material.icons.filled.MoreVert // Ícono 3 puntitos (overflow)
 import androidx.compose.material.icons.filled.Person // Ícono Registro
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.TextField
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.CenterAlignedTopAppBar // TopAppBar centrada
 import androidx.compose.material3.DropdownMenu // Menú desplegable
 import androidx.compose.material3.DropdownMenuItem // Opción del menú
@@ -24,7 +32,8 @@ fun AppTopBar(
     onOpenDrawer: () -> Unit, // Abre el drawer (hamburguesa)
     onHome: () -> Unit,       // Navega a Home
     onLogin: () -> Unit,      // Navega a Login
-    onRegister: () -> Unit    // Navega a Registro
+    onRegister: () -> Unit,   // Navega a Registro
+    onSearch: (String) -> Unit = {} // Callback cuando cambia la búsqueda
 ) {
     //lo que hace es crear una variable de estado recordada que le dice a la interfaz
     // si el menú desplegable de 3 puntitos debe estar visible (true) o oculto (false).
@@ -32,15 +41,27 @@ fun AppTopBar(
 
     CenterAlignedTopAppBar( // Barra alineada al centro
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            MaterialTheme.colorScheme.primary
         ),
-        title = { // Slot del título
-            Text(
-                text = "Demo Navegación Compose", // Título visible
-                style = MaterialTheme.typography.titleLarge, // Estilo grande
-                maxLines = 1,              // asegura una sola línea Int.MAX_VALUE   // permite varias líneas
-                overflow = TextOverflow.Ellipsis // agrega "..." si no cabe
-
+        title = {
+            var query by remember { mutableStateOf("") }
+            OutlinedTextField(
+                value = query,
+                onValueChange = {
+                    query = it
+                    onSearch(it)
+                },
+                placeholder = { Text("Buscar juegos...", color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f)) },
+                leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Buscar", tint = MaterialTheme.colorScheme.primary) },
+                singleLine = true,
+                shape = RoundedCornerShape(50),
+                colors = TextFieldDefaults.colors(
+                    MaterialTheme.colorScheme.primaryContainer
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(vertical = 6.dp)
             )
         },
         navigationIcon = { // Ícono a la izquierda (hamburguesa)
@@ -48,36 +69,6 @@ fun AppTopBar(
                 Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menú") // Ícono
             }
         },
-        actions = { // Acciones a la derecha (íconos + overflow)
-            IconButton(onClick = onHome) { // Ir a Home
-                Icon(Icons.Filled.Home, contentDescription = "Home") // Ícono Home
-            }
-            IconButton(onClick = onLogin) { // Ir a Login
-                Icon(Icons.Filled.AccountCircle, contentDescription = "Login") // Ícono Login
-            }
-            IconButton(onClick = onRegister) { // Ir a Registro
-                Icon(Icons.Filled.Person, contentDescription = "Registro") // Ícono Registro
-            }
-            IconButton(onClick = { showMenu = true }) { // Abre menú overflow
-                Icon(Icons.Filled.MoreVert, contentDescription = "Más") // Ícono 3 puntitos
-            }
-            DropdownMenu(
-                expanded = showMenu, // Si está abierto
-                onDismissRequest = { showMenu = false } // Cierra al tocar fuera
-            ) {
-                DropdownMenuItem( // Opción Home
-                    text = { Text("Home") }, // Texto opción
-                    onClick = { showMenu = false; onHome() } // Navega y cierra
-                )
-                DropdownMenuItem( // Opción Login
-                    text = { Text("Login") },
-                    onClick = { showMenu = false; onLogin() }
-                )
-                DropdownMenuItem( // Opción Registro
-                    text = { Text("Registro") },
-                    onClick = { showMenu = false; onRegister() }
-                )
-            }
-        }
+        actions = { /* acciones removidas: no mostrar iconos adicionales */ }
     )
 }

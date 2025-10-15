@@ -9,7 +9,6 @@ sealed class Route(val path: String) {
 
     // Core
     data object Splash : Route("splash")
-    data object Onboarding : Route("onboarding")
     data object Home : Route("home")
 
     // Auth
@@ -30,14 +29,7 @@ sealed class Route(val path: String) {
     data object GameDetail : Route("game/{gameId}") {
         fun build(gameId: String) = "game/$gameId"
     }
-    data object GameReviews : Route("game/{gameId}/reviews") {
-        fun build(gameId: String) = "game/$gameId/reviews"
-    }
-    data object NewReview : Route("game/{gameId}/review/new") {
-        fun build(gameId: String) = "game/$gameId/review/new"
-    }
     data object Library : Route("library")
-    data object Licenses : Route("licenses")
 
     // Tienda / Órdenes
     data object Cart : Route("cart")
@@ -47,20 +39,18 @@ sealed class Route(val path: String) {
         fun build(orderId: String) = "orders/$orderId"
     }
 
-    // Notificaciones / Soporte / Ajustes
-    data object Notifications : Route("notifications")
-    data object Help : Route("help")
-    data object Feedback : Route("feedback")
-
+    // Ajustes
     data object Settings : Route("settings")
-    data object SettingsLanguage : Route("settings/language")
-    data object SettingsTheme : Route("settings/theme")
-    data object SettingsPrivacy : Route("settings/privacy")
-    data object About : Route("settings/about")
+    data object CredentialsInfo : Route("credentials_info")
 
-    // Legales
-    data object Terms : Route("legal/terms")
-    data object Privacy : Route("legal/privacy")
+    // Administrador
+    data object AdminDashboard : Route("admin/dashboard")
+    data object AdminGames : Route("admin/games")
+    data object AdminAddGame : Route("admin/games/add")
+    data object AdminEditGame : Route("admin/games/edit/{gameId}") {
+        fun build(gameId: String) = "admin/games/edit/$gameId"
+    }
+    data object AdminUsers : Route("admin/users")
 
     // Estados / Errores
     data object NoConnection : Route("no_connection")
